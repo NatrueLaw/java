@@ -6,7 +6,7 @@ public class ERyder {
     private double kmDriven;
 
     public ERyder() {
-        this.bikeID = "DEFAULT_ID";
+        this.bikeID = "eRyder";
         this.batteryLevel = 100;
         this.isAvailable = true;
         this.kmDriven = 0.0;
