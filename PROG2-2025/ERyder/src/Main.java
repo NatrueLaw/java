@@ -5,7 +5,7 @@ public class Main {
         System.out.println("Default Constructor Bike");
         defaultBike.printBikeDetails();
 
-        ERyder paramBike = new ERyder("eRyder-001", 50, true, 100);
+        ERyder paramBike = new ERyder("eRyder-1", 50, true, 100);
         System.out.println("Parameter Constructor Bike");
         paramBike.printBikeDetails();
     }
