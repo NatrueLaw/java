@@ -32,7 +32,8 @@ public class Main {
         Feedback feedback = new Feedback("Aaaa", "Bbbb", "Aaaa.Bbbb@qq.com");
         feedback.analyseFeedback(true, sent1, sent2, sent3, sent4, sent5);
         System.out.println(feedback);
+
+        UserRegistration user = new UserRegistration();
+        user.registration();
     }
-
-
 }
