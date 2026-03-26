@@ -35,5 +35,7 @@ public class Main {
 
         UserRegistration user = new UserRegistration();
         user.registration();
+        AdminPanel adminPanel = new AdminPanel();
+        adminPanel.userManagementOptions();
     }
 }
