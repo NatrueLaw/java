@@ -48,8 +48,7 @@ public class RegisteredUsers {
         String cardStr = Long.toString(cardNumber);
         String censoredCard = cardStr.substring(0, cardStr.length()-4).replaceAll(".", "*") + cardStr.substring(cardStr.length()-4);
         
-        return "=====================================" +
-               "\nRegistered User Details" +
+        return "\nRegistered User Details" +
                "\nFull Name: " + fullName +
                "\nEmail Address: " + emailAddress +
                "\nDate of Birth: " + dateOfBirth +
@@ -58,7 +57,6 @@ public class RegisteredUsers {
                "\nCard Expiry Date: " + cardExpiryDate +
                "\nCVV: " + cvv +
                "\nUser Type: " + userType +
-               "\nLast 3 Trips:" + tripsInfo +
-               "\n=====================================";
-    }
+               "\nLast 3 Trips:" + tripsInfo ;
+               
 }
