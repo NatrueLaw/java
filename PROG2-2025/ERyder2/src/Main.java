@@ -2,6 +2,7 @@ public class Main {
     /*Teacher, I didn't delete it on the original program. 
     After the options 1 or 2 in the first paragraph jump out, 
     you can enter other numbers to enter the homework part of Exercise 8*/
+    
     public static void main(String[] args) {
         
         ERyder2 bike1 = new ERyder2(

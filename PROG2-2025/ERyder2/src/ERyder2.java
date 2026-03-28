@@ -1,5 +1,4 @@
 public class ERyder2 {
-    
     public static final String COMPANY_NAME = "ERyder";
     public static final double BASE_FARE = 1.0;
     public static final double PER_MINUTE_FARE = 0.5;

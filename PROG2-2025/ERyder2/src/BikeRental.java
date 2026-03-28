@@ -2,7 +2,6 @@ import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
-
 public class BikeRental {
     private boolean isRegisteredUser;
     private String emailAddress;

@@ -11,7 +11,6 @@ public class AdminPanel {
         registeredUsersList = new ArrayList<>();
         sc = new Scanner(System.in);
     }
-
     public void userManagementOptions() {
         while (true) {
             System.out.println("\nWelcome to E-Ryder Administrator Panel.");
