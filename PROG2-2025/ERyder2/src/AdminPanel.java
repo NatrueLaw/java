@@ -5,11 +5,13 @@ import java.util.Scanner;
 
 public class AdminPanel {
     private List<RegisteredUsers> registeredUsersList;
-    private Scanner sc; 
+    private Scanner sc;
+
     public AdminPanel() {
         registeredUsersList = new ArrayList<>();
         sc = new Scanner(System.in);
     }
+
     public void userManagementOptions() {
         while (true) {
             System.out.println("\nWelcome to E-Ryder Administrator Panel.");
@@ -18,14 +20,17 @@ public class AdminPanel {
             System.out.println("2. View Registered Users");
             System.out.println("3. Remove Registered Users");
             System.out.println("4. Update Registered Users");
-            System.out.println("5. EXIT");
+            // 【关键修改1】交换菜单提示文字（5和6的描述对调）
+            System.out.println("5. Demo the Bike Rental System"); 
+            System.out.println("6. EXIT"); 
             System.out.print("Please enter your choice: ");
+
             int choice;
             if (sc.hasNextInt()) {
                 choice = sc.nextInt();
-                sc.nextLine(); 
+                sc.nextLine();
             } else {
-                sc.nextLine(); 
+                sc.nextLine();
                 System.out.println("Invalid choice. Please try again");
                 continue;
             }
@@ -43,24 +48,26 @@ public class AdminPanel {
                 case 4:
                     updateRegisteredUsers();
                     break;
-                case 5:
+                // 【关键修改2】交换case 5和case 6的业务逻辑
+                case 5: 
+                    BikeRental bikeRental = new BikeRental();
+                    bikeRental.simulateApplicationInput();
+                    break;
+                case 6:
                     System.out.println("Exiting Admin Panel... Thank you!");
-                    sc.close(); 
-                    System.exit(0); 
+                    sc.close();
+                    System.exit(0);
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again");
             }
         }
     }
-
-    
     private void addNewUsers() {
         System.out.print("\nHow many users would you like to add? ");
         int numUsers = sc.nextInt();
-        sc.nextLine(); 
+        sc.nextLine();
 
-        
         for (int i = 0; i < numUsers; i++) {
             System.out.println("\n=== Adding User " + (i+1) + " ===");
             System.out.print("Full Name: ");
@@ -82,7 +89,6 @@ public class AdminPanel {
             System.out.print("User Type (Regular User/VIP User): ");
             String userType = sc.nextLine();
 
-        
             String[] lastThreeTrips = new String[3];
             for (int j = 0; j < 3; j++) {
                 System.out.println("\n--- Enter Trip " + (j+1) + " Details ---");
@@ -110,17 +116,18 @@ public class AdminPanel {
             System.out.println("User " + (i+1) + " added successfully!");
         }
     }
+
     private void viewRegisteredUsers() {
         System.out.println("\n=== All Registered Users ===");
         if (registeredUsersList.isEmpty()) {
             System.out.println("No registered users to display");
             return;
         }
-        
         for (RegisteredUsers user : registeredUsersList) {
             System.out.println(user);
         }
     }
+
     private void removeRegisteredUsers() {
         System.out.println("\n=== Remove Registered User ===");
         if (registeredUsersList.isEmpty()) {
@@ -134,7 +141,7 @@ public class AdminPanel {
         while (iterator.hasNext()) {
             RegisteredUsers user = iterator.next();
             if (user.getEmailAddress().equals(targetEmail)) {
-                iterator.remove(); 
+                iterator.remove();
                 found = true;
                 System.out.println("User with email " + targetEmail + " removed successfully!");
                 break;
@@ -144,10 +151,11 @@ public class AdminPanel {
             System.out.println("No user found with this email address");
         }
     }
+
     private void updateRegisteredUsers() {
         System.out.println("\n=== Update Registered User ===");
         if (registeredUsersList.isEmpty()) {
-            System.out.println("No registered users to update"); 
+            System.out.println("No registered users to update");
             return;
         }
         System.out.print("Enter the email address of the user to update: ");
@@ -163,38 +171,30 @@ public class AdminPanel {
             System.out.println("No user found with this email address");
             return;
         }
-
         System.out.println("Enter new details (press ENTER for no change for strings, enter 0 for no change for numbers)");
         System.out.print("New Full Name: (Press ENTER for no change) ");
         String newFullName = sc.nextLine();
         if (!newFullName.isEmpty()) targetUser.setFullName(newFullName);
-
         System.out.print("New Date of Birth (YYYY-MM-DD): (Press ENTER for no change) ");
         String newDob = sc.nextLine();
         if (!newDob.isEmpty()) targetUser.setDateOfBirth(newDob);
-
         System.out.print("New Card Expiry Date (MM/YY): (Press ENTER for no change) ");
         String newExpiry = sc.nextLine();
         if (!newExpiry.isEmpty()) targetUser.setCardExpiryDate(newExpiry);
-
         System.out.print("New Card Provider: (Press ENTER for no change) ");
         String newProvider = sc.nextLine();
         if (!newProvider.isEmpty()) targetUser.setCardProvider(newProvider);
-
         System.out.print("New User Type: (Press ENTER for no change) ");
         String newUserType = sc.nextLine();
         if (!newUserType.isEmpty()) targetUser.setUserType(newUserType);
-
         System.out.print("New Card Number (enter 0 for no change): ");
         long newCardNum = sc.nextLong();
         sc.nextLine();
         if (newCardNum != 0) targetUser.setCardNumber(newCardNum);
-
         System.out.print("New CVV (enter 0 for no change): ");
         int newCvv = sc.nextInt();
         sc.nextLine();
         if (newCvv != 0) targetUser.setCvv(newCvv);
-
         System.out.println("User with email " + targetEmail + " updated successfully!");
     }
 }
