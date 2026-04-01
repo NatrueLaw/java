@@ -1,16 +1,10 @@
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
 public class AdminPanel {
-    private List<RegisteredUsers> registeredUsersList;
-    private Scanner sc;
+    private final UserService userService = new UserService();
+    private final Scanner sc = new Scanner(System.in);
 
-    public AdminPanel() {
-        registeredUsersList = new ArrayList<>();
-        sc = new Scanner(System.in);
-    }
     public void userManagementOptions() {
         while (true) {
             System.out.println("\nWelcome to E-Ryder Administrator Panel.");
@@ -19,9 +13,8 @@ public class AdminPanel {
             System.out.println("2. View Registered Users");
             System.out.println("3. Remove Registered Users");
             System.out.println("4. Update Registered Users");
-            // 【关键修改1】交换菜单提示文字（5和6的描述对调）
-            System.out.println("5. Demo the Bike Rental System"); 
-            System.out.println("6. EXIT"); 
+            System.out.println("5. Demo the Bike Rental System");
+            System.out.println("6. EXIT");
             System.out.print("Please enter your choice: ");
 
             int choice;
@@ -35,38 +28,29 @@ public class AdminPanel {
             }
 
             switch (choice) {
-                case 1:
-                    addNewUsers();
-                    break;
-                case 2:
-                    viewRegisteredUsers();
-                    break;
-                case 3:
-                    removeRegisteredUsers();
-                    break;
-                case 4:
-                    updateRegisteredUsers();
-                    break;
-                // 【关键修改2】交换case 5和case 6的业务逻辑
-                case 5: 
+                case 1 -> addNewUsers();
+                case 2 -> viewRegisteredUsers();
+                case 3 -> removeRegisteredUsers();
+                case 4 -> updateRegisteredUsers();
+                case 5 -> {
                     BikeRental bikeRental = new BikeRental();
                     bikeRental.simulateApplicationInput();
-                    break;
-                case 6:
+                }
+                case 6 -> {
                     System.out.println("Exiting Admin Panel... Thank you!");
                     sc.close();
                     System.exit(0);
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again");
+                }
+                default -> System.out.println("Invalid choice. Please try again");
             }
         }
     }
+
+    // 以下方法仅保留输入/输出，业务逻辑交给 UserService
     private void addNewUsers() {
         System.out.print("\nHow many users would you like to add? ");
         int numUsers = sc.nextInt();
         sc.nextLine();
-
         for (int i = 0; i < numUsers; i++) {
             System.out.println("\n=== Adding User " + (i+1) + " ===");
             System.out.print("Full Name: ");
@@ -101,6 +85,7 @@ public class AdminPanel {
                 System.out.print("Feedback (press ENTER for NULL): ");
                 String feedback = sc.nextLine();
                 if (feedback.isEmpty()) feedback = "NULL";
+
                 StringBuilder tripSB = new StringBuilder();
                 tripSB.append("Date: ").append(tripDate)
                       .append(", Source: ").append(srcDest.split(",")[0].trim())
@@ -109,91 +94,88 @@ public class AdminPanel {
                       .append(", Feedback: ").append(feedback);
                 lastThreeTrips[j] = tripSB.toString();
             }
+
             RegisteredUsers newUser = new RegisteredUsers(fullName, emailAddress, dateOfBirth, cardNumber,
                     cardExpiryDate, cardProvider, cvv, userType, lastThreeTrips);
-            registeredUsersList.add(newUser);
+            userService.addUser(newUser);
             System.out.println("User " + (i+1) + " added successfully!");
         }
     }
 
     private void viewRegisteredUsers() {
         System.out.println("\n=== All Registered Users ===");
-        if (registeredUsersList.isEmpty()) {
+        List<RegisteredUsers> users = userService.getAllUsers();
+        if (users.isEmpty()) {
             System.out.println("No registered users to display");
             return;
         }
-        for (RegisteredUsers user : registeredUsersList) {
+        for (RegisteredUsers user : users) {
             System.out.println(user);
         }
     }
 
     private void removeRegisteredUsers() {
         System.out.println("\n=== Remove Registered User ===");
-        if (registeredUsersList.isEmpty()) {
+        if (userService.getAllUsers().isEmpty()) {
             System.out.println("No registered users to remove");
             return;
         }
         System.out.print("Enter the email address of the user to remove: ");
         String targetEmail = sc.nextLine();
-        boolean found = false;
-        Iterator<RegisteredUsers> iterator = registeredUsersList.iterator();
-        while (iterator.hasNext()) {
-            RegisteredUsers user = iterator.next();
-            if (user.getEmailAddress().equals(targetEmail)) {
-                iterator.remove();
-                found = true;
-                System.out.println("User with email " + targetEmail + " removed successfully!");
-                break;
-            }
-        }
-        if (!found) {
+        boolean removed = userService.removeUserByEmail(targetEmail);
+        if (removed) {
+            System.out.println("User with email " + targetEmail + " removed successfully!");
+        } else {
             System.out.println("No user found with this email address");
         }
     }
 
     private void updateRegisteredUsers() {
         System.out.println("\n=== Update Registered User ===");
-        if (registeredUsersList.isEmpty()) {
+        if (userService.getAllUsers().isEmpty()) {
             System.out.println("No registered users to update");
             return;
         }
         System.out.print("Enter the email address of the user to update: ");
         String targetEmail = sc.nextLine();
-        RegisteredUsers targetUser = null;
-        for (RegisteredUsers user : registeredUsersList) {
-            if (user.getEmailAddress().equals(targetEmail)) {
-                targetUser = user;
-                break;
-            }
-        }
+        RegisteredUsers targetUser = userService.findUserByEmail(targetEmail);
+
         if (targetUser == null) {
             System.out.println("No user found with this email address");
             return;
         }
+
         System.out.println("Enter new details (press ENTER for no change for strings, enter 0 for no change for numbers)");
         System.out.print("New Full Name: (Press ENTER for no change) ");
         String newFullName = sc.nextLine();
         if (!newFullName.isEmpty()) targetUser.setFullName(newFullName);
+
         System.out.print("New Date of Birth (YYYY-MM-DD): (Press ENTER for no change) ");
         String newDob = sc.nextLine();
         if (!newDob.isEmpty()) targetUser.setDateOfBirth(newDob);
+
         System.out.print("New Card Expiry Date (MM/YY): (Press ENTER for no change) ");
         String newExpiry = sc.nextLine();
         if (!newExpiry.isEmpty()) targetUser.setCardExpiryDate(newExpiry);
+
         System.out.print("New Card Provider: (Press ENTER for no change) ");
         String newProvider = sc.nextLine();
         if (!newProvider.isEmpty()) targetUser.setCardProvider(newProvider);
+
         System.out.print("New User Type: (Press ENTER for no change) ");
         String newUserType = sc.nextLine();
         if (!newUserType.isEmpty()) targetUser.setUserType(newUserType);
+
         System.out.print("New Card Number (enter 0 for no change): ");
         long newCardNum = sc.nextLong();
         sc.nextLine();
         if (newCardNum != 0) targetUser.setCardNumber(newCardNum);
+
         System.out.print("New CVV (enter 0 for no change): ");
         int newCvv = sc.nextInt();
         sc.nextLine();
         if (newCvv != 0) targetUser.setCvv(newCvv);
+
         System.out.println("User with email " + targetEmail + " updated successfully!");
     }
 }
