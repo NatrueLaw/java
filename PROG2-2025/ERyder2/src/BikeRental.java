@@ -26,12 +26,16 @@ public class BikeRental {
             if (!isRegisteredUser) {
                 System.out.println("You’re not our registered user. Please consider registering.");
                 userRegistration.registration();
+                return;
             } else {
                 System.out.println("Welcome back, " + emailAddress + "!");
             }
 
             String bikeID = bikeService.validateLocation(location);
-            if (bikeID == null) return;
+            if (bikeID == null) {
+                bikeService.addToRequestQueue(emailAddress, location);
+                return;
+            }
 
             System.out.println("Simulating e-bike reservation…");
             bikeService.reserveBike(bikeID);
@@ -43,6 +47,14 @@ public class BikeRental {
             System.out.println("Simulating the end of the trip…");
             rentalService.endRental(bikeID);
             bikeService.releaseBike(bikeID);
+            if (!BikeService.bikeRequestQueue.isEmpty()) {
+                BikeRequest req = BikeService.bikeRequestQueue.poll();
+                System.out.println("\nAuto-assigned to waiting user: " + req.getUserEmail());
+                bikeService.reserveBike(bikeID);
+                rentalService.startRental(bikeID, req.getUserEmail());
+                rentalService.endRental(bikeID);
+                bikeService.releaseBike(bikeID);
+            }
 
             System.out.println("Displaying the active rentals after trip end…");
             rentalService.viewActiveRentals();

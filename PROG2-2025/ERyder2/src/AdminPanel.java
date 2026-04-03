@@ -3,6 +3,7 @@ import java.util.Scanner;
 
 public class AdminPanel {
     private final UserService userService = new UserService();
+    private final BikeService bikeService = new BikeService();
     private final Scanner sc = new Scanner(System.in);
 
     public void userManagementOptions() {
@@ -14,7 +15,9 @@ public class AdminPanel {
             System.out.println("3. Remove Registered Users");
             System.out.println("4. Update Registered Users");
             System.out.println("5. Demo the Bike Rental System");
-            System.out.println("6. EXIT");
+            System.out.println("6. View System Logs");
+            System.out.println("7. Manage Pending Bike Requests");
+            System.out.println("8. EXIT");
             System.out.print("Please enter your choice: ");
 
             int choice;
@@ -36,7 +39,9 @@ public class AdminPanel {
                     BikeRental bikeRental = new BikeRental();
                     bikeRental.simulateApplicationInput();
                 }
-                case 6 -> {
+                case 6 -> bikeService.viewSystemLogs(); // 查看日志
+                case 7 -> manageRequestQueue(); // 管理预约队列
+                case 8 -> {
                     System.out.println("Exiting Admin Panel... Thank you!");
                     sc.close();
                     System.exit(0);
@@ -45,8 +50,36 @@ public class AdminPanel {
             }
         }
     }
+    private void manageRequestQueue() {
+        while (true) {
+            System.out.println("\n===== MANAGE PENDING REQUESTS =====");
+            System.out.println("1. View Queue");
+            System.out.println("2. Update Queue (Remove First)");
+            System.out.println("3. Exit");
+            System.out.print("Enter choice: ");
 
-    // 以下方法仅保留输入/输出，业务逻辑交给 UserService
+            int c = sc.nextInt();
+            sc.nextLine();
+
+            if (c == 1) {
+                System.out.println("\n===== PENDING REQUESTS =====");
+                for (BikeRequest req : BikeService.bikeRequestQueue) {
+                    System.out.println(req);
+                }
+            } else if (c == 2) {
+                if (!BikeService.bikeRequestQueue.isEmpty()) {
+                    BikeService.bikeRequestQueue.poll();
+                    System.out.println("First request removed successfully.");
+                } else {
+                    System.out.println("Queue is empty.");
+                }
+            } else if (c == 3) {
+                break;
+            } else {
+                System.out.println("Invalid choice.");
+            }
+        }
+    }
     private void addNewUsers() {
         System.out.print("\nHow many users would you like to add? ");
         int numUsers = sc.nextInt();
@@ -71,7 +104,6 @@ public class AdminPanel {
             sc.nextLine();
             System.out.print("User Type (Regular User/VIP User): ");
             String userType = sc.nextLine();
-
             String[] lastThreeTrips = new String[3];
             for (int j = 0; j < 3; j++) {
                 System.out.println("\n--- Enter Trip " + (j+1) + " Details ---");
@@ -85,7 +117,6 @@ public class AdminPanel {
                 System.out.print("Feedback (press ENTER for NULL): ");
                 String feedback = sc.nextLine();
                 if (feedback.isEmpty()) feedback = "NULL";
-
                 StringBuilder tripSB = new StringBuilder();
                 tripSB.append("Date: ").append(tripDate)
                       .append(", Source: ").append(srcDest.split(",")[0].trim())
@@ -94,7 +125,6 @@ public class AdminPanel {
                       .append(", Feedback: ").append(feedback);
                 lastThreeTrips[j] = tripSB.toString();
             }
-
             RegisteredUsers newUser = new RegisteredUsers(fullName, emailAddress, dateOfBirth, cardNumber,
                     cardExpiryDate, cardProvider, cvv, userType, lastThreeTrips);
             userService.addUser(newUser);
@@ -139,43 +169,34 @@ public class AdminPanel {
         System.out.print("Enter the email address of the user to update: ");
         String targetEmail = sc.nextLine();
         RegisteredUsers targetUser = userService.findUserByEmail(targetEmail);
-
         if (targetUser == null) {
             System.out.println("No user found with this email address");
             return;
         }
-
         System.out.println("Enter new details (press ENTER for no change for strings, enter 0 for no change for numbers)");
         System.out.print("New Full Name: (Press ENTER for no change) ");
         String newFullName = sc.nextLine();
         if (!newFullName.isEmpty()) targetUser.setFullName(newFullName);
-
         System.out.print("New Date of Birth (YYYY-MM-DD): (Press ENTER for no change) ");
         String newDob = sc.nextLine();
         if (!newDob.isEmpty()) targetUser.setDateOfBirth(newDob);
-
         System.out.print("New Card Expiry Date (MM/YY): (Press ENTER for no change) ");
         String newExpiry = sc.nextLine();
         if (!newExpiry.isEmpty()) targetUser.setCardExpiryDate(newExpiry);
-
         System.out.print("New Card Provider: (Press ENTER for no change) ");
         String newProvider = sc.nextLine();
         if (!newProvider.isEmpty()) targetUser.setCardProvider(newProvider);
-
         System.out.print("New User Type: (Press ENTER for no change) ");
         String newUserType = sc.nextLine();
         if (!newUserType.isEmpty()) targetUser.setUserType(newUserType);
-
         System.out.print("New Card Number (enter 0 for no change): ");
         long newCardNum = sc.nextLong();
         sc.nextLine();
         if (newCardNum != 0) targetUser.setCardNumber(newCardNum);
-
         System.out.print("New CVV (enter 0 for no change): ");
         int newCvv = sc.nextInt();
         sc.nextLine();
         if (newCvv != 0) targetUser.setCvv(newCvv);
-
         System.out.println("User with email " + targetEmail + " updated successfully!");
     }
 }
