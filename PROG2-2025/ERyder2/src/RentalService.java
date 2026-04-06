@@ -3,6 +3,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class RentalService {
+    public static final double BASE_FARE = 3.0;
     private final LinkedList<ActiveRental> activeRentalsList = new LinkedList<>();
 
     public void startRental(String bikeID, String userEmail) {
@@ -15,11 +16,9 @@ public class RentalService {
                 LocalDateTime.now()
         );
         BikeService.logStack.push(log);
-
         System.out.println("Reserving the bike with the " + bikeID + ". Please follow the on-screen instructions to locate the bike.");
     }
-
-    public void endRental(String bikeID) {
+    public void endRental(String bikeID, RegisteredUsers user) {
         Iterator<ActiveRental> it = activeRentalsList.iterator();
         while (it.hasNext()) {
             ActiveRental ar = it.next();
@@ -28,7 +27,11 @@ public class RentalService {
                 break;
             }
         }
+        double finalFare = user.calculateFare(BASE_FARE);
         System.out.println("Your trip has ended. Thank you for riding with us.");
+        user.displayUserType();
+        System.out.println("Base Fare: " + BASE_FARE);
+        System.out.println("Final Fare: " + finalFare);
     }
 
     public void viewActiveRentals() {

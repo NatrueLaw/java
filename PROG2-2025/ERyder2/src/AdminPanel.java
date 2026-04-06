@@ -125,10 +125,13 @@ public class AdminPanel {
                       .append(", Feedback: ").append(feedback);
                 lastThreeTrips[j] = tripSB.toString();
             }
-            RegisteredUsers newUser = new RegisteredUsers(fullName, emailAddress, dateOfBirth, cardNumber,
-                    cardExpiryDate, cardProvider, cvv, userType, lastThreeTrips);
+            RegisteredUsers newUser;
+            if (userType.equalsIgnoreCase("VIP User") || userType.equalsIgnoreCase("VIP")) {
+                newUser = new VIPUser(fullName, emailAddress, dateOfBirth, cardNumber,cardExpiryDate, cardProvider, cvv, userType, lastThreeTrips);
+            } else {
+                newUser = new RegularUser(fullName, emailAddress, dateOfBirth, cardNumber,cardExpiryDate, cardProvider, cvv, userType, lastThreeTrips);
+            }
             userService.addUser(newUser);
-            System.out.println("User " + (i+1) + " added successfully!");
         }
     }
 
